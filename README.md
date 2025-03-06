@@ -1,1 +1,1 @@
-# pg-pipeline
+# pg_pipeline
