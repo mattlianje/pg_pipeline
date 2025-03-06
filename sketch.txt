@@ -41,3 +41,12 @@ CREATE PIPELINE CONFIG retail_config FOR etl_customer_analytics
       vip_threshold = 500;
 
 EXECUTE PIPELINE etl_customer_analytics CONFIG retail_config;
+
+EXECUTE PIPELINE etl_customer_analytics RESTART STAGE transform_orders;
+
+-- Eh, not sure about this
+EXECUTE PIPELINE etl_customer_analytics PARALLEL_WORKERS 4;
+
+SELECT stage_name, execution_time, rows_processed 
+FROM pg_pipeline_metrics 
+WHERE pipeline = 'etl_customer_analytics';
