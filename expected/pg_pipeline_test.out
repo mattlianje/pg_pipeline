@@ -1,0 +1,17 @@
+-- Test that extension can be created
+CREATE EXTENSION pg_pipeline;
+-- Test the hello world function
+SELECT pipeline_hello('PostgreSQL');
+   pipeline_hello   
+--------------------
+ Hello, PostgreSQL!
+(1 row)
+
+SELECT pipeline_hello(NULL);
+  pipeline_hello  
+------------------
+ Hello, world!
+(1 row)
+
+-- Clean up
+DROP EXTENSION pg_pipeline;
