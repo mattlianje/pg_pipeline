@@ -29,7 +29,7 @@ Most organizations don't need the complexity of external data orchestration plat
 When your pipelines outgrow **pg_pipeline**, you'll know.
 
 ## Core Concepts
-There are just 4 concepts:
+There are just 4 things to know...
 ### 1. Pipeline Definition
 A pipeline consists of 5 keys in a json:
 
