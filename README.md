@@ -33,4 +33,4 @@ Most organizations don't need the complexity of external data orchestration plat
 - You need parameterizable, reusable data flows
 - You prefer maintaining one technology stack instead of several
 
-When your data pipeline needs outgrow this approach, you'll know.
+When your pipelines outgrow **pg_pipeline**, you'll know.
