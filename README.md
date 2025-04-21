@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="pix/pg_pipeline_with_github.png" width="350" alt="pg_pipeline logo">
+</p>
+
 # pg_pipeline
 **Simple, flow-style pipelines in Postgres**
 
