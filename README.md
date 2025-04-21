@@ -18,7 +18,7 @@ Just run the SQL script to install the extension:
 ```
 
 ## Of Note...
-Most organizations don't need the complexity of external data orchestration platforms:
+Many teams don't need the overhead of external data orchestration platforms / cluster compute:
 
 - External compute clusters and tools like Airflow, Dagster or Spark are overkill for 90% of data pipeline needs
 - Multi-cluster/server setups create multiple points of failure
