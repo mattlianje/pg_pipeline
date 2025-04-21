@@ -22,7 +22,7 @@ Many teams don't need the overhead of external data orchestration platforms / cl
 
 - External compute clusters and tools like Airflow, Dagster or Spark are overkill for 90% of data pipeline needs
 - Multi-cluster/server/technology setups create multiple points of failure
-- Polling-processes outisde your DB, metric gateways and databases (although formidable and beautiful ... I'm a fan) add complexity
+- Polling-processes outisde your DB and metric databases (although formidable and beautiful) add complexity
 - If **all** your data lives in your database already, why move it out just to process it?
 
 **pg_pipeline** caters to the 90%, where your data all lives in your DB, and you want to get started with simple, no-frills OLAP. 
