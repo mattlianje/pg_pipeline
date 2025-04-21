@@ -21,7 +21,7 @@ Just run the SQL script to install the extension:
 Many teams don't need the overhead of external data orchestration platforms / cluster compute:
 
 - External compute clusters and tools like Airflow, Dagster or Spark are overkill for 90% of data pipeline needs
-- Multi-cluster/server setups create multiple points of failure
+- Multi-cluster/server/technology setups create multiple points of failure
 - Polling-processes outisde your DB, metric gateways and databases (although formidable and beautiful ... I'm a fan) add complexity
 - If **all** your data lives in your database already, why move it out just to process it?
 
