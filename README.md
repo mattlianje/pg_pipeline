@@ -41,19 +41,21 @@ A pipeline consists of 5 keys in a json:
 - Flow: The order of execution
 
 ### Stage
-Each stage in your pipeline produces a temporary result table that subsequent stages can reference. Use the ~> operator to refer to output from previous stages:
+Each stage in your pipeline produces a temporary result table that subsequent stages can reference. Use the `~>` operator to refer to output from previous stages:
 ```sql
-"combined": "SELECT * FROM ~>active_users a LEFT JOIN ~>purchases p ON a.user_id = p.user_id"
+SELECT * FROM ~>active_users a LEFT JOIN ~>purchases p ON a.user_id = p.user_id
 ```
 
 ### Parameters
-Use parameters with the $(param_name) syntax:
+Make your pipelines config-driven with `$(param_name)` syntax:
 ```sql
-sql"active_users": "SELECT * FROM logins WHERE date > current_date - $(period)::int"
+SELECT * FROM logins WHERE date > current_date - $(period)::int
 ```
 
 ### Execution
-Monitor pipeline execution through the `pg_pipeline.executions` table:
+
+Everytime you execute a pipeline with `pipeline_execute`, run info with records processed and time-elapsed per stage
+are written to the `pg_pipeline.executions` table.
 ```sql
 SELECT 
   pipeline_name,
@@ -65,3 +67,7 @@ FROM pg_pipeline.executions
 WHERE pipeline_name = 'customer_metrics'
 ORDER BY started_at DESC;
 ```
+
+## Inspiration
+- [SODA](https://docs.soda.io/soda-cl/soda-cl-overview.html)
+- [fzf](https://github.com/junegunn/fzf)
