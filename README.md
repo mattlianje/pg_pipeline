@@ -1,5 +1,5 @@
 # pg_pipeline
-**Simple, flow-style pipelines inside Postgres**
+**Simple, flow-style pipelines in Postgres**
 
 A simple, zero-dependency PostgreSQL extension for building pretty 🐘✨ pipelines directly in your database
 
