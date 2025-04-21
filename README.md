@@ -1,5 +1,5 @@
 # pg_pipeline
-**Simple, powerful pipelines inside Postgres**
+**Write pipelines inside Postgres**
 
 A simple, zero-dependency PostgreSQL extension for building data pipelines directly in your database 🐘🪄.
 
