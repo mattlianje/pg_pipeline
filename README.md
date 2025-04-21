@@ -20,9 +20,9 @@ Just run the SQL script to install the extension:
 ## Of Note...
 Most organizations don't need the complexity of external data orchestration platforms:
 
-- External compute clusters and tools like Airflow, Dagster, or Prefect are overkill for 90% of data pipeline needs
+- External compute clusters and tools like Airflow, Dagster or Spark are overkill for 90% of data pipeline needs
 - Resource-intensive setups require specialized DevOps knowledge, infrastructure management, and introduce multiple points of failure
-- Monitoring dashboards in Grafana, monitoring agents, and metrics databases (although formidable) add even more complexity
+- Monitoring dashboards in Grafana, monitoring polling processes, and metrics databases (although formidable and beautiful ... I'm a fan) add even more complexity
 - If all your data lives in your database already, why move it out just to process it?
 
 pg_pipeline caters to the 90% use case where:
