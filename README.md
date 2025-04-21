@@ -1,7 +1,7 @@
 # pg_pipeline
 **Write pipelines inside Postgres**
 
-A simple, zero-dependency PostgreSQL extension for building data pipelines directly in your database 🐘🪄.
+A simple, zero-dependency PostgreSQL extension for building pipelines directly in your database 🐘🪄.
 
 ## Features
 - Define ETL flows using plain SQL
