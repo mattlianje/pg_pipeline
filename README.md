@@ -25,7 +25,7 @@ Most organizations don't need the complexity of external data orchestration plat
 - Monitoring dashboards in Grafana, monitoring polling processes, and metrics databases (although formidable and beautiful ... I'm a fan) add even more complexity
 - If all your data lives in your database already, why move it out just to process it?
 
-**pg_pipeline** caters to the 90% use case where:
+**pg_pipeline** caters to the 90%, where:
 
 - You already have PostgreSQL as your data store
 - Your transformations fit comfortably within SQL
