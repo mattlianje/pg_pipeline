@@ -25,12 +25,41 @@ Most organizations don't need the complexity of external data orchestration plat
 - Monitoring dashboards in Grafana, monitoring polling processes, and metrics databases (although formidable and beautiful ... I'm a fan) add even more complexity
 - If all your data lives in your database already, why move it out just to process it?
 
-**pg_pipeline** caters to the 90%, where:
-
-- You already have PostgreSQL as your data store
-- Your transformations fit comfortably within SQL
-- You want simple observability without complex monitoring stacks
-- You need parameterizable, reusable data flows
-- You prefer maintaining one technology stack instead of several
-
+**pg_pipeline** caters to the 90%, where your data all lives in your DB, and you want to get started with simple, no-frills OLAP. 
 When your pipelines outgrow **pg_pipeline**, you'll know.
+
+## Core Concepts
+There are just 4 concepts:
+### 1. Pipeline Definition
+A pipeline consists of 5 keys in a json:
+
+- Name + Description: For identification
+- Parameters: Configurable values with defaults
+- Stages: Individual SQL operations to be performed
+- Flow: The order of execution
+
+### 2. Stage References
+Each stage in your pipeline produces a temporary result table that subsequent stages can reference. Use the ~> operator to refer to output from previous stages:
+```sql
+"combined": "SELECT * FROM ~>active_users a LEFT JOIN ~>purchases p ON a.user_id = p.user_id"
+```
+
+### 3. Parameters
+Use parameters with the $(param_name) syntax:
+```sql
+sql"active_users": "SELECT * FROM logins WHERE date > current_date - $(period)::int"
+```
+
+### 4. Execution & Monitoring
+Monitor pipeline execution through the `pg_pipeline.executions` table:
+```sql
+SELECT 
+  pipeline_name,
+  started_at,
+  completed_at,
+  (stats->'total_duration_ms')::numeric/1000 AS duration_seconds,
+  stats->'stages'->'active_users'->'records_out' AS active_users_count
+FROM pg_pipeline.executions
+WHERE pipeline_name = 'customer_metrics'
+ORDER BY started_at DESC;
+```
