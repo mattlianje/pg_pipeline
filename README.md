@@ -5,7 +5,7 @@
 # pg_pipeline
 **Simple, flow-style pipelines in Postgres**
 
-A simple but powerful PostgreSQL extension for building flow-style pipelines directly in your database 🐘🪄
+A simple PostgreSQL extension for building flow-style pipelines directly in your database 🐘🪄
 
 ## Features
 - Simple JSON-based pipeline definition
