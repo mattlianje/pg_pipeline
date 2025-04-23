@@ -27,8 +27,8 @@ Many teams don't need the overhead of external data orchestration platforms / cl
 - Polling-processes outisde your DB and metric databases (although formidable and beautiful) add complexity
 - If **all** your data lives in your database already, why move it out just to process it?
 
-**pg_pipeline** caters to the 90%, where your data all lives in your DB, and you want to get started with simple, no-frills OLAP. 
-When your pipelines outgrow **pg_pipeline**, you'll know.
+**pg_pipeline** caters to the 90%, where all your data lives in your DB, and you want to get started with simple, no-frills OLAP. 
+When your pipelines outgrows **pg_pipeline**, you'll know it.
 
 ## Core Concepts
 There are just 4 things to know...
