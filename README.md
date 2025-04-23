@@ -5,12 +5,12 @@
 # pg_pipeline
 **Simple, flow-style pipelines in Postgres**
 
-A simple, zero-dependency PostgreSQL extension for building pretty pipelines directly in your database 🐘🪄
+A simple, zero-dependency PostgreSQL extension for building flow-style pipelines directly in your database 🐘🪄
 
 ## Features
 - Simple JSON-based pipeline definition
 - Config-driven pipelines
-- Reference previous stage results with the `~>` operator
+- Reference previous stage results (flow-style) with the `~>` operator
 - "Batteries-included" execution stats
 
 ## Get started
