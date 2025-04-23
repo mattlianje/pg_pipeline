@@ -68,6 +68,3 @@ WHERE pipeline_name = 'customer_metrics'
 ORDER BY started_at DESC;
 ```
 
-## Inspiration
-- [SODA](https://docs.soda.io/soda-cl/soda-cl-overview.html)
-- [fzf](https://github.com/junegunn/fzf)
