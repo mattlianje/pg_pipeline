@@ -29,11 +29,11 @@
      inkscape:document-units="mm"
      inkscape:zoom="0.4111103"
      inkscape:cx="592.29847"
-     inkscape:cy="533.91998"
+     inkscape:cy="533.91997"
      inkscape:window-width="1584"
      inkscape:window-height="974"
-     inkscape:window-x="382"
-     inkscape:window-y="274"
+     inkscape:window-x="348"
+     inkscape:window-y="213"
      inkscape:window-maximized="0"
      inkscape:current-layer="layer1" />
   <defs
@@ -118,27 +118,27 @@
          y="237.12523">~&gt;</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:59.2723px;font-family:Iosevka;-inkscape-font-specification:Iosevka;fill:#f87930;fill-opacity:0.907816;stroke:#000000;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
-       x="165.1301"
-       y="267.94482"
+       style="font-size:66.7063px;font-family:Iosevka;-inkscape-font-specification:Iosevka;fill:#f87930;fill-opacity:0.907816;stroke:#000000;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
+       x="214.10501"
+       y="257.32251"
        id="text7"
-       transform="scale(0.95758106,1.044298)"><tspan
+       transform="scale(0.93524963,1.0692333)"><tspan
          sodipodi:role="line"
          id="tspan7"
          style="fill:#f87930;fill-opacity:0.907816;stroke-width:0"
-         x="165.1301"
-         y="267.94482">~&gt;pg_</tspan></text>
+         x="214.10501"
+         y="257.32251">pg_</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:59.2723px;font-family:Iosevka;-inkscape-font-specification:Iosevka;fill:#f87930;fill-opacity:0.47695389;stroke:#000000;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
+       style="font-size:59.2723px;font-family:Iosevka;-inkscape-font-specification:Iosevka;fill:#f87930;fill-opacity:0.476954;stroke:#000000;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
        x="162.8864"
        y="271.33435"
        id="text7-4"
        transform="scale(0.95758107,1.044298)"><tspan
          sodipodi:role="line"
          id="tspan7-9"
-         style="fill:#f87930;fill-opacity:0.47695389;stroke-width:0"
+         style="fill:#f87930;fill-opacity:0.476954;stroke-width:0"
          x="162.8864"
-         y="271.33435">~&gt;pg_</tspan></text>
+         y="271.33435" /></text>
   </g>
 </svg>
