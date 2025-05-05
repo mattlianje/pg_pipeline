@@ -5,10 +5,11 @@
 # pg_pipeline
 **Powerful, database-native pipelines** 
 
- An ultra-light PostgreSQL extension to build, run, monitor pipelines directly in your database 🐘🪄
+A PostgreSQL extension to build, run, monitor pipelines directly in your database 🐘🪄
 
 ## Features
 - Simple JSON-based pipeline definition
+- Zero dependencies, no external tools
 - Config-driven pipelines
 - Reference previous stage results with `~>`
 - "Batteries-included" execution stats
