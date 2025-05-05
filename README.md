@@ -5,7 +5,7 @@
 # pg_pipeline
 **Powerful, database-native pipelines** 
 
-Build, run, monitor pipelines directly in your database 🐘🪄 (A lightweight PostgreSQL extension)
+Build, run, monitor pipelines directly in your database 🐘🪄 An ultra-light PostgreSQL extension
 
 ## Features
 - Simple JSON-based pipeline definition
