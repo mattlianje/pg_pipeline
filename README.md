@@ -3,14 +3,15 @@
 </p>
 
 # pg_pipeline
-**Simple, flow-style pipelines in Postgres**
+**Powerful, database-native pipelines** 
 
-A simple PostgreSQL extension for building pipelines directly in your database 🐘🪄
+A PostgreSQL extension to build, run, monitor pipelines directly in your database 🐘🪄
 
 ## Features
 - Simple JSON-based pipeline definition
+- Zero dependencies, no external tools
 - Config-driven pipelines
-- Reference previous stage results (flow-style) with the `~>` operator
+- Reference previous stage results with `~>`
 - "Batteries-included" execution stats
 
 ## Get started
@@ -56,15 +57,4 @@ SELECT * FROM logins WHERE date > current_date - $(period)::int
 
 Everytime you execute a pipeline with `pipeline_execute`, run info with records processed and time-elapsed per stage
 are written to the `pg_pipeline.executions` table.
-```sql
-SELECT 
-  pipeline_name,
-  started_at,
-  completed_at,
-  (stats->'total_duration_ms')::numeric/1000 AS duration_seconds,
-  stats->'stages'->'active_users'->'records_out' AS active_users_count
-FROM pg_pipeline.executions
-WHERE pipeline_name = 'customer_metrics'
-ORDER BY started_at DESC;
-```
 
