@@ -21,15 +21,10 @@ Just run the SQL script to install the extension:
 ```
 
 ## Of Note...
-Many teams don't need the overhead of external data orchestration platforms / cluster compute:
+If **all** your data lives in your database already, why move it out just to process it?
 
-- External compute clusters and tools like Airflow, Dagster or Spark are overkill for 90% of data pipeline needs
-- Multi-cluster/server/technology setups create multiple points of failure
-- Polling-processes outisde your DB and metric databases (although formidable and beautiful) add complexity
-- If **all** your data lives in your database already, why move it out just to process it?
-
-**pg_pipeline** caters to the 90%, where all your data lives in your DB, and you want to get started with simple, no-frills OLAP. 
-When your pipelines outgrows **pg_pipeline**, you'll know it.
+Many teams and use-cases don't need the overhead of external data orchestration platforms / cluster compute.
+**pg_pipeline** caters to the 90%, where all your data lives in your DB, and you want to get started with simple, no-frills OLAP.
 
 ## Core Concepts
 There are just 4 things to know...
