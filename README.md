@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="pix/pg_pipeline_with_github.png" width="350" alt="pg_pipeline logo">
+  <img src="pix/pg_pipeline_demo.png" width="700">
 </p>
 
-# pg_pipeline
+# <img src="pix/pg_pipeline.png" width="50"> pg_pipeline
 **Powerful, database-native pipelines** 
 
 A PostgreSQL extension to build, run, monitor pipelines directly in your database 🐘🪄

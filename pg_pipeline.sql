@@ -354,26 +354,28 @@ INSERT INTO recent_sales (product_id, quantity, sale_date) VALUES
   (102, 1, CURRENT_DATE - 5),
   (101, 4, CURRENT_DATE - 6);
 
+-- Create your pipelines (they are saved in pipeline.pipelines)
 SELECT create_pipeline(
-  'sales_summary',                 -- Pipeline name
+  'sales_summary',                 -- Name
   'Daily product sales summary',   -- Description
-                                   -- Define params
+                                   -- Define params with default values 
   '{
     "days_ago": "7"
   }',
                                    -- Set your stages. Use params with $(param_name)
-				   -- Use previous stages with ~>stage_name
+                                   -- Use previous stages with ~>stage_name
   '{
     "get_sales": "SELECT * FROM recent_sales WHERE sale_date > CURRENT_DATE - $(days_ago)::INTEGER",
-    
     "summarize": "SELECT product_id, SUM(quantity) AS total_sold FROM ~>get_sales GROUP BY product_id",
-
     "save": "INSERT INTO product_performance SELECT CURRENT_DATE, product_id, total_sold FROM ~>summarize"
   }',
-  '{"order": ["get_sales", "summarize", "save"]}'
+  '{"order": ["get_sales", "summarize", "save"]}' -- Slot stages in order
 );
 
-SELECT execute_pipeline('sales_summary', '{}');
-SELECT execute_pipeline('sales_summary', '{"days_ago": "3"}');
+-- Execute your pipelines (with or w/out param overrides)
+SELECT execute_pipeline('sales_summary', '{"days_ago": "6"}');
+
+-- Get per stage execution metrics for free
+
 
 */
