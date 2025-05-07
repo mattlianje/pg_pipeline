@@ -5,7 +5,7 @@
 # <img src="pix/pg_pipeline.png" width="50"> pg_pipeline
 **Powerful, database-native pipelines** 
 
-A lightweight PostgresQL library to build JSON-configured pipelines directly in your database 🐘🪄
+A lightweight PostgresQL library to build, store and run pipelines directly in your database 🐘🪄
 
 ## Features
 - Simple JSON-based pipeline definition
