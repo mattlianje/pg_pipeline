@@ -12,7 +12,7 @@ A lightweight PostgresQL library to build JSON-configured pipelines directly in 
 - Zero dependencies, no external tools
 - Config-driven pipelines
 - Reference previous stage results with `~>`
-- Execution stats, row count for free
+- Execution stats, row counts for free
 
 ## Get started
 Just run the SQL script to install the extension:
@@ -21,9 +21,10 @@ Just run the SQL script to install the extension:
 ```
 
 ## Of Note...
-If **all** your data lives in your database already, why move it out just to process it?
+Ultimately, **pg_pipeline** is just a few tiny PL/pgSQL functions which let you chain pipelines out of config-driven queries (with some extra niceties like execution stats and ~> syntax).
 
-Many teams and use-cases don't need the overhead of external data orchestration platforms / cluster compute.
+Prematurely reaching towards workflow schdulers and cluster-compute engines pulls data teams into a quagmire.
+
 **pg_pipeline** caters to the 90%, where all your data lives in your DB, and you want to get started with simple, no-frills OLAP.
 
 ## Core Concepts
