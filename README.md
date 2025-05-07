@@ -21,7 +21,7 @@ Just run the SQL script to install the extension:
 ```
 
 ## Of Note...
-Ultimately, **pg_pipeline** is just a few tiny PL/pgSQL functions which let you chain pipelines out of config-driven queries (with some extra niceties like execution stats and ~> syntax).
+Ultimately, **pg_pipeline** is just a few tiny PL/pgSQL functions which let you stitch pipelines out of config-driven queries in a tidy JSON (with some extra niceties like execution stats and `~>` syntax).
 
 Prematurely reaching towards workflow schdulers and cluster-compute engines pulls data teams into a quagmire.
 
