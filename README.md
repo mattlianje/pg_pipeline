@@ -3,7 +3,7 @@
 </p>
 
 # <img src="pix/pg_pipeline.png" width="50"> pg_pipeline
-**Simple, powerful pipelines in Postgres** 
+**Simple pipelines in Postgres** 
 
 A lightweight PostgresQL library to build, store and run pipelines directly in your database 🐘🪄
 
