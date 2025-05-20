@@ -1,18 +1,18 @@
 <p align="center">
-  <img src="pix/pg_pipeline_with_github.png" width="350" alt="pg_pipeline logo">
+  <img src="pix/pg_pipeline_demo.png" width="700">
 </p>
 
-# pg_pipeline
-**Powerful, database-native pipelines** 
+# <img src="pix/pg_pipeline.png" width="50"> pg_pipeline
+**Write pipelines inside Postgres** 
 
-A PostgreSQL extension to build, run, monitor pipelines directly in your database 🐘🪄
+A lightweight PostgresQL library to build, store and run pipelines directly in your database 🐘🪄
 
 ## Features
 - Simple JSON-based pipeline definition
 - Zero dependencies, no external tools
 - Config-driven pipelines
 - Reference previous stage results with `~>`
-- "Batteries-included" execution stats
+- Execution stats, row counts for free
 
 ## Get started
 Just run the SQL script to install the extension:
@@ -21,15 +21,11 @@ Just run the SQL script to install the extension:
 ```
 
 ## Of Note...
-Many teams don't need the overhead of external data orchestration platforms / cluster compute:
+Ultimately, **pg_pipeline** is just a few tiny PL/pgSQL functions which let you stitch pipelines out of config-driven queries in a tidy JSON (with some extra niceties like execution stats and `~>` syntax).
 
-- External compute clusters and tools like Airflow, Dagster or Spark are overkill for 90% of data pipeline needs
-- Multi-cluster/server/technology setups create multiple points of failure
-- Polling-processes outisde your DB and metric databases (although formidable and beautiful) add complexity
-- If **all** your data lives in your database already, why move it out just to process it?
+Prematurely reaching towards workflow schdulers and cluster-compute engines pulls data teams into a quagmire.
 
-**pg_pipeline** caters to the 90%, where all your data lives in your DB, and you want to get started with simple, no-frills OLAP. 
-When your pipelines outgrows **pg_pipeline**, you'll know it.
+**pg_pipeline** caters to the 90%, where all your data lives in your DB, and you want to get started with simple, no-frills OLAP.
 
 ## Core Concepts
 There are just 4 things to know...
