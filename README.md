@@ -32,10 +32,10 @@ There are just 4 things to know...
 ### Pipeline
 A pipeline consists of 5 keys in a json:
 
-- Name + Description: For identification
-- Parameters: Configurable values with defaults
-- Stages: Individual SQL operations to be performed
-- Flow: The order of execution
+- `name` + `description`: For identification
+- `parameters`: Configurable values with defaults
+- `stages`: Individual SQL operations to be performed
+- `flow`: The order of execution
 
 ### Stage
 Each stage in your pipeline produces a temporary result table that subsequent stages can reference. Use the `~>` operator to refer to output from previous stages:
