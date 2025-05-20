@@ -46,7 +46,7 @@ SELECT * FROM ~>active_users a LEFT JOIN ~>purchases p ON a.user_id = p.user_id
 ### Parameters
 Make your pipelines config-driven with `$(param_name)` syntax:
 ```sql
-SELECT * FROM logins WHERE date > current_date - $(period)::int
+SELECT * FROM logins WHERE date > current_date - $(period)
 ```
 
 ### Execution
