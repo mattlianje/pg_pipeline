@@ -5,7 +5,8 @@
 # <img src="pix/pg_pipeline.png" width="50"> pg_pipeline
 **Write pipelines inside Postgres** 
 
-A lightweight PostgresQL library to build, store and run pipelines directly in your database 🐘🪄
+A lightweight PostgresQL library to build, store and run pipelines directly in your database 🐘🪄.
+Part of [d4](https://github.com/mattlianje/d4)
 
 ## Features
 - Simple JSON-based pipeline definition
