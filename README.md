@@ -5,7 +5,8 @@
 # <img src="pix/pg_pipeline.png" width="50"> pg_pipeline
 **Write pipelines inside Postgres** 
 
-A lightweight PostgresQL library to build, store and run pipelines directly in your database 🐘🪄
+A lightweight PostgresQL library to build, store and run pipelines directly in your database 🐘🪄.
+Part of [d4](https://github.com/mattlianje/d4)
 
 ## Features
 - Simple JSON-based pipeline definition
@@ -32,10 +33,10 @@ There are just 4 things to know...
 ### Pipeline
 A pipeline consists of 5 keys in a json:
 
-- Name + Description: For identification
-- Parameters: Configurable values with defaults
-- Stages: Individual SQL operations to be performed
-- Flow: The order of execution
+- `name` + `description`: For identification
+- `parameters`: Configurable values with defaults
+- `stages`: Individual SQL operations to be performed
+- `flow`: The order of execution
 
 ### Stage
 Each stage in your pipeline produces a temporary result table that subsequent stages can reference. Use the `~>` operator to refer to output from previous stages:
@@ -46,7 +47,7 @@ SELECT * FROM ~>active_users a LEFT JOIN ~>purchases p ON a.user_id = p.user_id
 ### Parameters
 Make your pipelines config-driven with `$(param_name)` syntax:
 ```sql
-SELECT * FROM logins WHERE date > current_date - $(period)::int
+SELECT * FROM logins WHERE date > current_date - $(period)
 ```
 
 ### Execution

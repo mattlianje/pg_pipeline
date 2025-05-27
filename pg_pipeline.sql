@@ -1,4 +1,3 @@
--- pg_pipeline.sql - PostgreSQL pipeline extension
 CREATE SCHEMA IF NOT EXISTS pipeline;
 
 CREATE TABLE IF NOT EXISTS pipeline.pipelines (
@@ -75,7 +74,7 @@ DECLARE
   stage_start_time TIMESTAMP;
   stage_end_time TIMESTAMP;
   records_count INT;
-  stats_json JSONB;  -- Removed initialization here
+  stats_json JSONB;
   stage_stats JSONB := '{}'::JSONB;
 BEGIN
   parsed_params := p_params::JSONB;
@@ -164,7 +163,6 @@ BEGIN
         )
       );
       
-      -- Fix: properly append to the stages array
       stats_json := jsonb_set(
         stats_json, 
         '{stages}', 
@@ -224,7 +222,7 @@ LEFT JOIN pipeline.executions e ON p.pipeline_id = e.pipeline_id
 GROUP BY p.pipeline_id, p.name, p.description
 ORDER BY p.name;
 
--- Add convenience aliases in public schema if desired
+-- Add convenience aliases in public schema
 CREATE OR REPLACE FUNCTION create_pipeline(
   p_name TEXT,
   p_description TEXT,
