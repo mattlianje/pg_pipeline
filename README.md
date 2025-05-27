@@ -31,11 +31,11 @@ There are just 4 things to know...
 ### Pipeline definition
 A pipeline is created using create_pipeline() with 5 parameters:
 
--`name`: Pipeline identifier (string)
--`description`: Pipeline description (string)
--`parameters`: Configurable values with defaults (JSON string)
--`stages`: Individual SQL operations (JSON string)
--`execution_order`: Execution order specification (JSON string with "order" array)
+- `name`: Pipeline identifier (string)
+- `description`: Pipeline description (string)
+- `parameters`: Configurable values with defaults (JSON string)
+- `stages`: Individual SQL operations (JSON string)
+- `execution_order`: Execution order specification (JSON string with "order" array)
 
 ### Stage references
 Each stage produces a temporary result table. Reference previous stages using the `~>` operator:
