@@ -288,48 +288,6 @@ FROM stage_details
 WHERE stage_name IS NOT NULL
 ORDER BY started_at DESC, stage_started_at;
 
-
-
-/**
-Synthetic example 2
-CREATE TABLE customers (id SERIAL PRIMARY KEY, name TEXT, email TEXT);
-CREATE TABLE orders (id SERIAL PRIMARY KEY, customer_id INT, amount NUMERIC, order_date DATE);
-CREATE TABLE report (report_date DATE, customer TEXT, orders_count INT, total_spent NUMERIC);
-
-INSERT INTO customers VALUES (1, 'Alice', 'alice@example.com'), (2, 'Bob', 'bob@example.com');
-INSERT INTO orders VALUES 
-  (1, 1, 100, CURRENT_DATE - 5),
-  (2, 1, 200, CURRENT_DATE - 3),
-  (3, 2, 150, CURRENT_DATE - 2),
-  (4, 1, 75, CURRENT_DATE);
-
-SELECT create_pipeline(
-  'customer_report',                 -- Name of pipeline
-  'Simple customer spending report', -- Description
-                                     -- Define pipeline params
-  '{
-    "min_amount": "50",
-    "days_ago": "7"
-  }',
-                                     -- Define your pipeline stages
-  '{
-    "get_orders": "SELECT c.name, o.amount, o.order_date FROM customers c JOIN orders o ON c.id = o.customer_id WHERE o.amount > $(min_amount) AND o.order_date > CURRENT_DATE - $(days_ago)::INTEGER",
-    "aggregate": "SELECT CURRENT_DATE AS report_date, name, COUNT(*) AS orders_count, SUM(amount) AS total_spent FROM ~>get_orders GROUP BY name",
-    "save": "INSERT INTO report SELECT * FROM ~>aggregate"
-  }',
-                                     -- Order stages
-  '{"order": ["get_orders", "aggregate", "save"]}'
-);
-
-                                     -- Run pipeline
-SELECT execute_pipeline('customer_report', '{}');
-
-SELECT * FROM report;
-SELECT execute_pipeline('customer_report', '{"min_amount": "150", "days_ago": "3"}');
-
-*/
-
-
 /***
 Example number 2:
 CREATE TABLE recent_sales (
