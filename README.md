@@ -22,24 +22,23 @@ Just run the SQL script to install the extension:
 ```
 
 ## Of Note...
-Ultimately, **pg_pipeline** is just a few tiny PL/pgSQL functions which let you stitch pipelines out of config-driven queries in a tidy JSON (with some extra niceties like execution stats and `~>` syntax).
+**pg_pipeline** is just a few PL/pgSQL functions that let you build config-driven query pipelines with JSON. 
 
-Prematurely reaching towards workflow schdulers and cluster-compute engines pulls data teams into a quagmire.
-
-**pg_pipeline** caters to the 90%, where all your data lives in your DB, and you want to get started with simple, no-frills OLAP.
+It targets the 90% use case where your data lives in your database and you want simple, no-frills data processing without the complexity of external workflow schedulers or cluster-compute engines.
 
 ## Core Concepts
 There are just 4 things to know...
-### Pipeline
-A pipeline consists of 5 keys in a json:
+### Pipeline definition
+A pipeline is created using create_pipeline() with 5 parameters:
 
-- `name` + `description`: For identification
-- `parameters`: Configurable values with defaults
-- `stages`: Individual SQL operations to be performed
-- `flow`: The order of execution
+`name`: Pipeline identifier (string)
+`description`: Pipeline description (string)
+`parameters`: Configurable values with defaults (JSON string)
+`stages`: Individual SQL operations (JSON string)
+`execution_order`: Execution order specification (JSON string with "order" array)
 
-### Stage
-Each stage in your pipeline produces a temporary result table that subsequent stages can reference. Use the `~>` operator to refer to output from previous stages:
+### Stage references
+Each stage produces a temporary result table. Reference previous stages using the `~>` operator:
 ```sql
 SELECT * FROM ~>active_users a LEFT JOIN ~>purchases p ON a.user_id = p.user_id
 ```
@@ -50,8 +49,6 @@ Make your pipelines config-driven with `$(param_name)` syntax:
 SELECT * FROM logins WHERE date > current_date - $(period)
 ```
 
-### Execution
-
-Everytime you execute a pipeline with `pipeline_execute`, run info with records processed and time-elapsed per stage
-are written to the `pg_pipeline.executions` table.
+### Execution tracking
+Every `execute_pipeline()` call logs execution metadata to `pipeline.stage_executions`, including records processed and duration per stage.
 
