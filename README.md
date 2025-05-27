@@ -22,7 +22,7 @@ Just run the SQL script to install the extension:
 ```
 
 ## Of Note...
-**pg_pipeline** is just a few PL/pgSQL functions that let you build config-driven query pipelines with JSON. 
+At the end of the day, **pg_pipeline** is just a few PL/pgSQL functions that let you build config-driven query pipelines with JSON. 
 
 It targets the 90% use case where your data lives in your database and you want simple, no-frills data processing without the complexity of external workflow schedulers or cluster-compute engines.
 
