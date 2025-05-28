@@ -70,7 +70,7 @@ Yep - but the project is still fledgling.
 Absolutely. Use `pg_cron` for scheduling, or call `execute_pipeline()` from app logic.
 
 **Q: What happens if a stage fails?**  
-Execution halts immediately. Logs still write to `pipeline.stage_executions`, and prior temp tables are preserved.
+Execution halts immediately. Logs still write to `pipeline.stage_executions`.
 
 ## Full example
 ```sql
