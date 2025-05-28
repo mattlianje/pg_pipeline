@@ -58,7 +58,7 @@ Every `execute_pipeline()` call logs execution metadata to `pipeline.stage_execu
 Nope. It’s 100% pure SQL/PLpgSQL. Just run the install script.
 
 **Q: What does `~>` actually do?**  
-It expands to a temp table created by a previous stage — like `pipeline_tmp_<stage>`.
+It expands to a temp table created by a previous stage - like `pipeline_tmp_<stage>`.
 
 **Q: How are parameters handled?**  
 They're string-substituted into your SQL before execution. Use `$(param_name)` and pass values as JSON.
