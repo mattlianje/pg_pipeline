@@ -16,7 +16,7 @@ Part of [d4](https://github.com/mattlianje/d4)
 - Execution stats, row counts for free
 
 ## Get started
-Just run the SQL script to install the extension:
+Just run the SQL script to install the lib:
 ```sql
 \i pg_pipeline.sql
 ```
