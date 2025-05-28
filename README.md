@@ -64,7 +64,7 @@ It expands to a temp table created by a previous stage — like `pipeline_tmp_<s
 They're string-substituted into your SQL before execution. Use `$(param_name)` and pass values as JSON.
 
 **Q: Is this safe for production?**  
-Yep - but the project fledgling.
+Yep - but the project is still fledgling.
 
 **Q: Can I use `pg_cron` or triggers to schedule pipelines?**  
 Absolutely. Use `pg_cron` for scheduling, or call `execute_pipeline()` from app logic.
