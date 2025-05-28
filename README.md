@@ -55,22 +55,22 @@ Every `execute_pipeline()` call logs execution metadata to `pipeline.stage_execu
 ## FAQ
 
 **Q: Do I need to install anything outside Postgres?**  
-**A:** Nope. It’s 100% pure SQL/PLpgSQL. Just run the install script.
+Nope. It’s 100% pure SQL/PLpgSQL. Just run the install script.
 
 **Q: What does `~>` actually do?**  
-**A:** It expands to a temp table created by a previous stage — like `pipeline_tmp_<stage>`.
+It expands to a temp table created by a previous stage — like `pipeline_tmp_<stage>`.
 
 **Q: How are parameters handled?**  
-**A:** They're string-substituted into your SQL before execution. Use `$(param_name)` and pass values as JSON.
+They're string-substituted into your SQL before execution. Use `$(param_name)` and pass values as JSON.
 
 **Q: Is this safe for production?**  
-**A:** Yep - but the project fledgling.
+Yep - but the project fledgling.
 
 **Q: Can I use `pg_cron` or triggers to schedule pipelines?**  
-**A:** Absolutely. Use `pg_cron` for scheduling, or call `execute_pipeline()` from app logic.
+Absolutely. Use `pg_cron` for scheduling, or call `execute_pipeline()` from app logic.
 
 **Q: What happens if a stage fails?**  
-**A:** Execution halts immediately. Logs still write to `pipeline.stage_executions`, and prior temp tables are preserved.
+Execution halts immediately. Logs still write to `pipeline.stage_executions`, and prior temp tables are preserved.
 
 ## Full example
 ```sql
