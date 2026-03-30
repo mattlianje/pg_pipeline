@@ -3,121 +3,183 @@
 </p>
 
 # <img src="pix/pg_pipeline.png" width="50"> pg_pipeline
-**Write pipelines inside Postgres** 
+**Write pipelines inside Postgres**
 
-A lightweight PostgresQL library to build, store and run pipelines directly in your database 🐘🪄.
+A lightweight PostgreSQL library to build, store and run pipelines directly in your database 🐘🪄.
 Part of [d4](https://github.com/mattlianje/d4)
 
 ## Features
 - Simple JSON-based pipeline definition
 - Zero dependencies, no external tools
 - Config-driven pipelines
-- Reference previous stage results with `~>`
+- Reference previous stage results with `#`
+- Dry run mode to preview resolved SQL without executing
+- Parameter validation catches undefined `$(param)` references
 - Execution stats, row counts for free
 
 ## Get started
-Just run the SQL script to install the lib:
+```bash
+make install      # install into your database
+make test         # run the test suite
+make sandbox      # drop into a psql session with pg_pipeline loaded
+```
+Or just:
 ```sql
 \i pg_pipeline.sql
 ```
 
-## Of Note...
-At the end of the day, **pg_pipeline** is just a few PL/pgSQL functions that let you build config-driven query pipelines with JSON. 
+## How it works
 
-It targets the 90% use case where your data lives in your database and you want simple, no-frills data processing without the complexity of external workflow schedulers or cluster-compute engines.
+**Two functions. That's the API.**
 
-## Core Concepts
-There are just 4 things to know...
-### Pipeline definition
-A pipeline is created using create_pipeline() with 5 parameters:
+`create_pipeline()` defines a pipeline. `execute_pipeline()` runs it.
 
-- `name`: Pipeline identifier (string)
-- `description`: Pipeline description (string)
-- `parameters`: Configurable values with defaults (JSON string)
-- `stages`: Individual SQL operations (JSON string)
-- `execution_order`: Execution order specification (JSON string with "order" array)
-
-### Stage references
-Each stage produces a temporary result table. Reference previous stages using the `~>` operator:
 ```sql
-SELECT * FROM ~>active_users a LEFT JOIN ~>purchases p ON a.user_id = p.user_id
+SELECT create_pipeline(
+  'daily_revenue',                          -- name
+  'Aggregate revenue by product per day',   -- description
+  '{"lookback": "7"}',                      -- parameters with defaults
+  '{
+    "orders":   "SELECT * FROM orders WHERE created_at > CURRENT_DATE - $(lookback)",
+    "revenue":  "SELECT product_id, SUM(total) AS rev FROM #orders GROUP BY 1",
+    "snapshot": "INSERT INTO revenue_daily SELECT CURRENT_DATE, product_id, rev FROM #revenue"
+  }',
+  '{"order": ["orders", "revenue", "snapshot"]}'
+);
 ```
 
-### Parameters
-Make your pipelines config-driven with `$(param_name)` syntax:
 ```sql
-SELECT * FROM logins WHERE date > current_date - $(period)
+-- run with default params
+SELECT execute_pipeline('daily_revenue');
+
+-- override params at runtime
+SELECT execute_pipeline('daily_revenue', '{"lookback": "30"}');
 ```
 
-### Execution tracking
-Every `execute_pipeline()` call logs execution metadata to `pipeline.stage_executions`, including records processed and duration per stage.
+### `#` — stage references
+
+Each stage stores its results in a temp table. Reference it with `#stage_name`:
+
+```sql
+SELECT user_id, SUM(amount) FROM #filtered_orders GROUP BY 1
+```
+
+`#` resolves to the actual temp table at execution time (word-boundary safe — `#orders` won't clobber `#orders_backup`).
+
+### `$(param)` — parameters
+
+String-substituted before execution. Define defaults in `create_pipeline`, override in `execute_pipeline`:
+
+```sql
+SELECT * FROM events WHERE ts > NOW() - INTERVAL '$(hours) hours'
+```
+
+### Dry run
+
+Preview the resolved SQL without executing:
+```sql
+SELECT jsonb_pretty(execute_pipeline('daily_revenue', '{"lookback": "14"}', true));
+```
+
+Returns every stage's SQL with `#` and `$(...)` fully substituted. Nothing is executed, nothing is logged.
+
+### Validation
+
+Catches errors before any SQL runs:
+- **Parameter validation** — `$(typo_param)` raises an error if the param doesn't exist
+- **Flow/stage consistency** — stages missing from `flow.order` (or vice versa) are rejected at creation time
+
+## Querying runs
+
+```sql
+-- all defined pipelines
+SELECT * FROM pipeline.list;
+
+-- recent runs (one row per execution)
+SELECT * FROM pipeline_history('daily_revenue');
+SELECT * FROM pipeline_history();              -- all pipelines, last 10
+SELECT * FROM pipeline_history(NULL, 50);      -- all pipelines, last 50
+
+-- stage-level detail
+SELECT * FROM pipeline.stage_executions WHERE pipeline_name = 'daily_revenue';
+
+-- aggregate stats
+SELECT * FROM pipeline.status;
+```
+
+## Real-world example: dashboard rollup
+
+A pipeline that powers a Grafana/Metabase dashboard — computes daily active users, segments them by cohort, and materializes a summary table your BI tool queries directly.
+
+```sql
+-- Source tables: events(user_id, event_type, ts), users(user_id, signup_date, plan)
+
+SELECT create_pipeline(
+  'dash_daily_engagement',
+  'Daily user engagement rollup for dashboards',
+  '{"target_date": "CURRENT_DATE - 1"}',
+
+  -- stages
+  '{
+    "active_users": "
+      SELECT DISTINCT user_id, DATE(ts) AS activity_date
+      FROM events
+      WHERE DATE(ts) = $(target_date)
+        AND event_type != ''pageview''
+    ",
+    "with_cohort": "
+      SELECT a.user_id, a.activity_date, u.plan,
+             DATE_PART(''day'', a.activity_date - u.signup_date)::int AS days_since_signup
+      FROM #active_users a
+      JOIN users u USING (user_id)
+    ",
+    "rollup": "
+      INSERT INTO dash_engagement (activity_date, plan, cohort_bucket, active_users, pct_of_total)
+      SELECT activity_date, plan,
+             CASE WHEN days_since_signup < 7  THEN ''first_week''
+                  WHEN days_since_signup < 30 THEN ''first_month''
+                  ELSE ''mature''
+             END AS cohort_bucket,
+             COUNT(*) AS active_users,
+             ROUND(COUNT(*)::numeric / SUM(COUNT(*)) OVER (PARTITION BY activity_date), 4) AS pct_of_total
+      FROM #with_cohort
+      GROUP BY 1, 2, 3
+      ON CONFLICT (activity_date, plan, cohort_bucket) DO UPDATE
+        SET active_users = EXCLUDED.active_users,
+            pct_of_total = EXCLUDED.pct_of_total
+    "
+  }',
+
+  '{"order": ["active_users", "with_cohort", "rollup"]}'
+);
+
+-- Backfill the last 7 days
+SELECT execute_pipeline(
+  'dash_daily_engagement',
+  '{"target_date": "CURRENT_DATE - ' || d || '"}'
+) FROM generate_series(1, 7) AS d;
+
+-- Schedule with pg_cron
+SELECT cron.schedule('nightly-engagement', '5 2 * * *',
+  $$SELECT execute_pipeline('dash_daily_engagement')$$
+);
+```
+
+Your BI tool just queries `dash_engagement` — no transformation layer, no intermediate storage, no moving parts outside Postgres.
 
 ## FAQ
 
-**Q: Do I need to install anything outside Postgres?**  
-Nope. It’s 100% pure SQL/PLpgSQL. Just run the install script.
+**Do I need anything outside Postgres?**
+No. Pure SQL/PLpgSQL. One file.
 
-**Q: What does `~>` actually do?**  
-It expands to a temp table created by a previous stage - like `pipeline_tmp_<stage>`.
+**What does `#` do under the hood?**
+Expands to a temp table: `temp_stage_<execution_id>_<stage_name>`. Same idea as SQL Server `#temp` tables.
 
-**Q: How are parameters handled?**  
-They're string-substituted into your SQL before execution. Use `$(param_name)` and pass values as JSON.
+**What happens if a stage fails?**
+Execution halts. The error and all completed stage stats are logged to `pipeline.executions`.
 
-**Q: Is this safe for production?**  
-Yep - but the project is still fledgling.
+**Can I schedule pipelines?**
+Yes — `pg_cron`, triggers, or call `execute_pipeline()` from app code.
 
-**Q: Can I use `pg_cron` or triggers to schedule pipelines?**  
-Absolutely. Use `pg_cron` for scheduling, or call `execute_pipeline()` from app logic.
-
-**Q: What happens if a stage fails?**  
-Execution halts immediately. Logs still write to `pipeline.stage_executions`.
-
-## Full example
-```sql
--- Setup: Tables for raw data and output
-CREATE TABLE recent_sales (
-  id SERIAL PRIMARY KEY,
-  product_id INT,
-  quantity INT,
-  sale_date DATE
-);
-
-CREATE TABLE product_performance (
-  report_date DATE,
-  product_id INT,
-  total_sold INT,
-  PRIMARY KEY (report_date, product_id)
-);
-
--- Sample data
-INSERT INTO recent_sales (product_id, quantity, sale_date) VALUES
-  (101, 5, CURRENT_DATE - 1),
-  (102, 3, CURRENT_DATE - 2),
-  (101, 2, CURRENT_DATE - 3),
-  (103, 8, CURRENT_DATE - 4),
-  (102, 1, CURRENT_DATE - 5),
-  (101, 4, CURRENT_DATE - 6);
-
--- Create the pipeline
-SELECT create_pipeline(
-  'sales_summary',
-  'Daily product sales summary',
-  '{"days_ago": "7"}',
-  '{
-    "get_sales": "SELECT * FROM recent_sales WHERE sale_date > CURRENT_DATE - $(days_ago)",
-    "summarize": "SELECT product_id, SUM(quantity) AS total_sold FROM ~>get_sales GROUP BY product_id",
-    "save": "INSERT INTO product_performance SELECT CURRENT_DATE, product_id, total_sold FROM ~>summarize"
-  }',
-  '{"order": ["get_sales", "summarize", "save"]}'
-);
-
--- Run the pipeline with a param override
-SELECT execute_pipeline('sales_summary', '{"days_ago": "6"}');
-
--- Inspect recent executions
-SELECT pipeline_name, execution_id, stage_name, duration_ms, records_out
-FROM pipeline.stage_executions
-ORDER BY execution_id DESC
-LIMIT 3;
-```
-
+**Can I run this against large tables?**
+It runs whatever SQL you give it. If your query is fast, your pipeline is fast. Index accordingly.
