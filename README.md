@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="pix/pg_pipeline_demo.png" width="700">
+  <img src="pix/demo.gif" width="700">
 </p>
 
 # <img src="pix/pg_pipeline.png" width="50"> pg_pipeline
