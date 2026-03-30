@@ -176,17 +176,17 @@ Your BI tool just queries `dash_engagement`. No transformation layer, no interme
 
 ## FAQ
 
-**Do I need anything outside Postgres?**
+**Do I need anything outside Postgres?**<br>
 No. Pure SQL/PLpgSQL. One file.
 
-**What does `#` do under the hood?**
+**What does `#` do under the hood?**<br>
 Expands to a temp table: `temp_stage_<execution_id>_<stage_name>`
 
-**What happens if a stage fails?**
+**What happens if a stage fails?**<br>
 Execution halts. The error and all completed stage stats are logged to `pipeline.executions`.
 
-**Can I schedule pipelines?**
+**Can I schedule pipelines?**<br>
 Yes. `pg_cron`, triggers, or call `execute_pipeline()` from app code.
 
-**Can I run this against large tables?**
+**Can I run this against large tables?**<br>
 It runs whatever SQL you give it. If your query is fast, your pipeline is fast. Index accordingly.
