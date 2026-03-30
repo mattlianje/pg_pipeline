@@ -269,8 +269,9 @@ BEGIN
   ASSERT FOUND, 'should have a run';
   ASSERT rec.status = 'completed', 'run should be completed';
   ASSERT rec.duration_ms IS NOT NULL, 'should have duration';
-  ASSERT rec.total_records > 0, 'should have records, got ' || rec.total_records;
-  RAISE NOTICE 'PASS: pipeline.runs shows % total records, %ms', rec.total_records, rec.duration_ms;
+  ASSERT rec.records_read > 0, 'should have records_read, got ' || rec.records_read;
+  ASSERT rec.records_written >= 0, 'records_written should be >= 0';
+  RAISE NOTICE 'PASS: pipeline.runs shows % read, % written, %ms', rec.records_read, rec.records_written, rec.duration_ms;
 END $$;
 
 -- ============================================================

@@ -254,7 +254,8 @@ BEGIN
           'started_at', stage_start_time,
           'completed_at', stage_end_time,
           'duration_ms', EXTRACT(EPOCH FROM (stage_end_time - stage_start_time)) * 1000,
-          'records_out', records_count
+          'records_out', records_count,
+          'type', CASE WHEN stage_query ~* '^INSERT|^UPDATE|^DELETE' THEN 'write' ELSE 'read' END
         )
       );
 
@@ -374,6 +375,7 @@ SELECT
   completed_at,
   status,
   stage_name,
+  stage_data->stage_name->>'type' AS type,
   (stage_data->stage_name->>'duration_ms')::numeric AS duration_ms,
   (stage_data->stage_name->>'records_out')::integer AS records_out,
   (stage_data->stage_name->>'started_at')::timestamp AS stage_started_at,
@@ -408,7 +410,11 @@ SELECT
   e.completed_at,
   ROUND((stats->>'total_duration_ms')::numeric) AS duration_ms,
   (SELECT COALESCE(SUM(((v->(SELECT key FROM jsonb_each(v) LIMIT 1))->>'records_out')::int), 0)
-   FROM jsonb_array_elements(e.stats->'stages') AS v) AS total_records,
+   FROM jsonb_array_elements(e.stats->'stages') AS v
+   WHERE (v->(SELECT key FROM jsonb_each(v) LIMIT 1))->>'type' = 'read') AS records_read,
+  (SELECT COALESCE(SUM(((v->(SELECT key FROM jsonb_each(v) LIMIT 1))->>'records_out')::int), 0)
+   FROM jsonb_array_elements(e.stats->'stages') AS v
+   WHERE (v->(SELECT key FROM jsonb_each(v) LIMIT 1))->>'type' = 'write') AS records_written,
   stats->>'error' AS error
 FROM pipeline.executions e
 ORDER BY e.started_at DESC;
@@ -424,10 +430,11 @@ CREATE OR REPLACE FUNCTION pipeline.history(
   parameters JSONB,
   started_at TIMESTAMP,
   duration_ms NUMERIC,
-  total_records BIGINT,
+  records_read BIGINT,
+  records_written BIGINT,
   error TEXT
 ) AS $$
-  SELECT execution_id, pipeline_name, status, parameters, started_at, duration_ms, total_records, error
+  SELECT execution_id, pipeline_name, status, parameters, started_at, duration_ms, records_read, records_written, error
   FROM pipeline.runs
   WHERE (p_name IS NULL OR pipeline.runs.pipeline_name = p_name)
   ORDER BY started_at DESC
@@ -444,7 +451,8 @@ CREATE OR REPLACE FUNCTION pipeline_history(
   parameters JSONB,
   started_at TIMESTAMP,
   duration_ms NUMERIC,
-  total_records BIGINT,
+  records_read BIGINT,
+  records_written BIGINT,
   error TEXT
 ) AS $$
   SELECT * FROM pipeline.history(p_name, p_limit);
