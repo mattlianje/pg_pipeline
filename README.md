@@ -64,7 +64,7 @@ Each stage stores its results in a temp table. Reference it with `#stage_name`:
 SELECT user_id, SUM(amount) FROM #filtered_orders GROUP BY 1
 ```
 
-`#` resolves to the actual temp table at execution time (word-boundary safe — `#orders` won't clobber `#orders_backup`).
+`#` resolves to the actual temp table at execution time (word-boundary safe - `#orders` won't clobber `#orders_backup`).
 
 ### Parameters
 
@@ -86,8 +86,8 @@ Returns every stage's SQL with `#` and `$(...)` fully substituted. Nothing is ex
 ### Validation
 
 Catches errors before any SQL runs:
-- **Parameter validation** — `$(typo_param)` raises an error if the param doesn't exist
-- **Flow/stage consistency** — stages missing from `flow.order` (or vice versa) are rejected at creation time
+- **Parameter validation** - `$(typo_param)` raises an error if the param doesn't exist
+- **Flow/stage consistency** - stages missing from `flow.order` (or vice versa) are rejected at creation time
 
 ## Querying runs
 You can view all current pipelines and/or their stages and history with the views:
@@ -116,7 +116,7 @@ SELECT * FROM pipeline.status;
 
 ## Real-world example: dashboard rollup
 
-A pipeline that powers a Grafana/Metabase dashboard — computes daily active users, segments them by cohort, and materializes a summary table your BI tool queries directly.
+A pipeline that powers a Grafana/Metabase dashboard. Computes daily active users, segments them by cohort, and materializes a summary table your BI tool queries directly.
 
 ```sql
 -- Source tables: events(user_id, event_type, ts), users(user_id, signup_date, plan)
@@ -172,26 +172,21 @@ SELECT cron.schedule('nightly-engagement', '5 2 * * *',
 );
 ```
 
-Your BI tool just queries `dash_engagement` — no transformation layer, no intermediate storage, no moving parts outside Postgres.
+Your BI tool just queries `dash_engagement`. No transformation layer, no intermediate storage, no moving parts outside Postgres.
 
 ## FAQ
 
-**Do I need anything outside Postgres?** 
-
+**Do I need anything outside Postgres?**
 No. Pure SQL/PLpgSQL. One file.
 
-**What does `#` do under the hood?** 
-
+**What does `#` do under the hood?**
 Expands to a temp table: `temp_stage_<execution_id>_<stage_name>`
 
-**What happens if a stage fails?** 
-
+**What happens if a stage fails?**
 Execution halts. The error and all completed stage stats are logged to `pipeline.executions`.
 
-**Can I schedule pipelines?** 
+**Can I schedule pipelines?**
+Yes. `pg_cron`, triggers, or call `execute_pipeline()` from app code.
 
-Yes... `pg_cron`, triggers, or call `execute_pipeline()` from app code.
-
-**Can I run this against large tables?** 
-
+**Can I run this against large tables?**
 It runs whatever SQL you give it. If your query is fast, your pipeline is fast. Index accordingly.
