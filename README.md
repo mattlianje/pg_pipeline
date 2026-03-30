@@ -114,19 +114,16 @@ SELECT * FROM pipeline.stage_executions WHERE pipeline_name = 'daily_revenue';
 SELECT * FROM pipeline.status;
 ```
 
-## Real-world example: dashboard rollup
+## Real-world example: OLAP pipeline
 
-A pipeline that powers a Grafana/Metabase dashboard. Computes daily active users, segments them by cohort, and materializes a summary table your BI tool queries directly.
+Every pipeline run is tracked automatically. Point Grafana or Metabase at the built-in views and you get operational dashboards for free.
 
 ```sql
--- Source tables: events(user_id, event_type, ts), users(user_id, signup_date, plan)
-
+-- A multi-stage analytics pipeline
 SELECT create_pipeline(
-  'dash_daily_engagement',
-  'Daily user engagement rollup for dashboards',
+  'daily_engagement',
+  'Daily user engagement by cohort',
   '{"target_date": "CURRENT_DATE - 1"}',
-
-  -- stages
   '{
     "active_users": "
       SELECT DISTINCT user_id, DATE(ts) AS activity_date
@@ -136,43 +133,47 @@ SELECT create_pipeline(
     ",
     "with_cohort": "
       SELECT a.user_id, a.activity_date, u.plan,
-             DATE_PART(''day'', a.activity_date - u.signup_date)::int AS days_since_signup
+             DATE_PART(''day'', a.activity_date - u.signup_date)::int AS tenure_days
       FROM #active_users a
       JOIN users u USING (user_id)
     ",
-    "rollup": "
-      INSERT INTO dash_engagement (activity_date, plan, cohort_bucket, active_users, pct_of_total)
+    "summary": "
       SELECT activity_date, plan,
-             CASE WHEN days_since_signup < 7  THEN ''first_week''
-                  WHEN days_since_signup < 30 THEN ''first_month''
+             CASE WHEN tenure_days < 7  THEN ''first_week''
+                  WHEN tenure_days < 30 THEN ''first_month''
                   ELSE ''mature''
-             END AS cohort_bucket,
-             COUNT(*) AS active_users,
-             ROUND(COUNT(*)::numeric / SUM(COUNT(*)) OVER (PARTITION BY activity_date), 4) AS pct_of_total
+             END AS cohort,
+             COUNT(*) AS active_users
       FROM #with_cohort
       GROUP BY 1, 2, 3
-      ON CONFLICT (activity_date, plan, cohort_bucket) DO UPDATE
-        SET active_users = EXCLUDED.active_users,
-            pct_of_total = EXCLUDED.pct_of_total
     "
   }',
-
-  '{"order": ["active_users", "with_cohort", "rollup"]}'
+  '{"order": ["active_users", "with_cohort", "summary"]}'
 );
 
--- Backfill the last 7 days
-SELECT execute_pipeline(
-  'dash_daily_engagement',
-  '{"target_date": "CURRENT_DATE - ' || d || '"}'
-) FROM generate_series(1, 7) AS d;
+-- Run it
+SELECT execute_pipeline('daily_engagement');
 
 -- Schedule with pg_cron
 SELECT cron.schedule('nightly-engagement', '5 2 * * *',
-  $$SELECT execute_pipeline('dash_daily_engagement')$$
+  $$SELECT execute_pipeline('daily_engagement')$$
 );
 ```
 
-Your BI tool just queries `dash_engagement`. No transformation layer, no intermediate storage, no moving parts outside Postgres.
+Then in your BI tool, just query the built-in views:
+
+```sql
+-- pipeline health dashboard: runs, durations, failures
+SELECT * FROM pipeline.runs;
+
+-- per-stage breakdown: find slow stages, track row counts over time
+SELECT * FROM pipeline.stage_executions;
+
+-- overview: success rates, last run times
+SELECT * FROM pipeline.status;
+```
+
+No special rollup tables to maintain. The observability comes from running pipelines, not from writing extra code.
 
 ## FAQ
 
