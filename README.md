@@ -56,7 +56,7 @@ SELECT execute_pipeline('daily_revenue');
 SELECT execute_pipeline('daily_revenue', '{"lookback": "30"}');
 ```
 
-### `#` — stage references
+### Stage references
 
 Each stage stores its results in a temp table. Reference it with `#stage_name`:
 
@@ -66,7 +66,7 @@ SELECT user_id, SUM(amount) FROM #filtered_orders GROUP BY 1
 
 `#` resolves to the actual temp table at execution time (word-boundary safe — `#orders` won't clobber `#orders_backup`).
 
-### `$(param)` — parameters
+### Parameters
 
 String-substituted before execution. Define defaults in `create_pipeline`, override in `execute_pipeline`:
 
