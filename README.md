@@ -17,22 +17,16 @@ Part of [d4](https://github.com/mattlianje/d4)
 - Parameter validation catches undefined `$(param)` references
 - Execution stats, row counts for free
 
-## Get started
-```bash
-make install      # install into your database
-make test         # run the test suite
-make sandbox      # drop into a psql session with pg_pipeline loaded
-```
-Or just:
+## Quickstart
+You just need:
 ```sql
 \i pg_pipeline.sql
 ```
 
-## How it works
+## Core concepts
 
 The simple API has just two functions
 1. `create_pipeline()` defines a pipeline.
-2. `execute_pipeline()` runs it.
 
 ```sql
 SELECT create_pipeline(
@@ -47,6 +41,7 @@ SELECT create_pipeline(
   '{"order": ["orders", "revenue", "snapshot"]}'
 );
 ```
+2. `execute_pipeline()` runs it.
 
 ```sql
 -- run with default params
@@ -55,6 +50,28 @@ SELECT execute_pipeline('daily_revenue');
 -- override params at runtime
 SELECT execute_pipeline('daily_revenue', '{"lookback": "30"}');
 ```
+
+## FAQ
+
+**Why pg_pipeline?**<br>
+Reifying your dataflows lets you reason about your dataflows, and compose them without leaning on bloated warehouses,
+or "scheduler-as-architecture" setups.
+
+**Do I need anything outside Postgres?**<br>
+No. Pure SQL/PLpgSQL. One file.
+
+**What does `#` do under the hood?**<br>
+Expands to a temp table: `temp_stage_<execution_id>_<stage_name>`
+
+**What happens if a stage fails?**<br>
+Execution halts. The error and all completed stage stats are logged to `pipeline.executions`.
+
+**Can I schedule pipelines?**<br>
+Yes. `pg_cron`, triggers, or call `execute_pipeline()` from app code.
+
+**Can I run this against large tables?**<br>
+It runs whatever SQL you give it. If your query is fast, your pipeline is fast. Index accordingly.
+
 
 ### Stage references
 
@@ -174,20 +191,3 @@ SELECT * FROM pipeline.status;
 ```
 
 No special rollup tables to maintain. The observability comes from running pipelines, not from writing extra code.
-
-## FAQ
-
-**Do I need anything outside Postgres?**<br>
-No. Pure SQL/PLpgSQL. One file.
-
-**What does `#` do under the hood?**<br>
-Expands to a temp table: `temp_stage_<execution_id>_<stage_name>`
-
-**What happens if a stage fails?**<br>
-Execution halts. The error and all completed stage stats are logged to `pipeline.executions`.
-
-**Can I schedule pipelines?**<br>
-Yes. `pg_cron`, triggers, or call `execute_pipeline()` from app code.
-
-**Can I run this against large tables?**<br>
-It runs whatever SQL you give it. If your query is fast, your pipeline is fast. Index accordingly.
