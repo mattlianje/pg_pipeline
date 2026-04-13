@@ -1,5 +1,4 @@
 # pg_pipeline Demo
-# Full lifecycle: install → define → execute → observe
 
 Output pix/demo.gif
 Set FontSize 20
@@ -10,7 +9,7 @@ Set TypingSpeed 70ms
 Set Padding 10
 Set Framerate 60
 
-# ── Setup: create DB, install pg_pipeline, seed demo tables + data ──
+# Setup DB and seed demo tables
 Hide
 Type "psql -d postgres -c 'DROP DATABASE IF EXISTS pg_pipeline_demo;'"
 Enter
@@ -34,7 +33,7 @@ Show
 Ctrl+L
 Sleep 500ms
 
-# ── 1. Create a pipeline ──
+# 1) Create a pipeline
 Type "-- Define a 2-stage pipeline with a parameterized lookback window"
 Enter
 Sleep 500ms
@@ -58,7 +57,7 @@ Enter
 Sleep 3s
 Set TypingSpeed 70ms
 
-# ── 2. Execute it ──
+# 2) Execute pipeline
 Type "-- Run it with days=7"
 Enter
 Sleep 500ms
@@ -66,7 +65,7 @@ Type `SELECT jsonb_pretty(execute_pipeline('revenue_by_product', '{"days": "7"}'
 Enter
 Sleep 4s
 
-# ── 3. Same pipeline, different params ──
+# 3) Run the same pipeline w/ different params
 Type "-- Same pipeline, wider window: days=30"
 Enter
 Sleep 500ms
@@ -74,7 +73,7 @@ Type `SELECT jsonb_pretty(execute_pipeline('revenue_by_product', '{"days": "30"}
 Enter
 Sleep 4s
 
-# ── 4. Observability: check all runs ──
+# 4) Observability checks
 Type "-- All pipeline runs with timing and row counts"
 Enter
 Sleep 500ms
@@ -82,7 +81,7 @@ Type "SELECT pipeline_name, status, started_at, duration_ms, records_read, recor
 Enter
 Sleep 5s
 
-# ── 5. Pipeline health at a glance ──
+# 5) Checks all your pipelines at a glance
 Type "-- Pipeline health at a glance"
 Enter
 Sleep 500ms
