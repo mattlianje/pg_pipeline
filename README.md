@@ -72,7 +72,7 @@ Yes. `pg_cron`, triggers, or call `execute_pipeline()` from app code.
 **Can I run this against large tables?**<br>
 It runs whatever SQL you give it. If your query is fast, your pipeline is fast. Index accordingly.
 
-
+## Tutorial
 ### Stage references
 
 Each stage stores its results in a temp table. Reference it with `#stage_name`:
