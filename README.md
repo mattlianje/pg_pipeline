@@ -1,3 +1,7 @@
+<div align="right">
+  <sub><em>Part of <a href="https://github.com/mattlianje/d4"><img src="https://raw.githubusercontent.com/mattlianje/d4/master/pix/d4.png" width="23"></a> <a href="https://github.com/mattlianje/d4">d4</a></em></sub>
+</div>
+
 <p align="center">
   <img src="pix/demo.gif" width="700">
 </p>
